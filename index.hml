@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTroca - Economia Circular</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #81c784;
+            --bg-color: #f1f8e9;
+            --text-color: #333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { margin: 5px 0 0; opacity: 0.9; }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover { background-color: #1b5e20; }
+
+        .impact-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            width: 45%;
+        }
+        .stat-box span { display: block; font-size: 2rem; color: var(--primary); font-weight: bold; }
+
+        .ranking-list { list-style: none; padding: 0; margin: 0; }
+        .ranking-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .ranking-list li:nth-child(1) { font-weight: bold; color: #d4af37; font-size: 1.1rem; } /* Ouro */
+        .ranking-list li:nth-child(2) { font-weight: bold; color: #c0c0c0; } /* Prata */
+        .ranking-list li:nth-child(3) { font-weight: bold; color: #cd7f32; } /* Bronze */
+        
+        .badge {
+            background: var(--secondary);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>EcoTroca ♻️</h1>
+        <p>Conectando pessoas, reduzindo resíduos e salvando o planeta.</p>
+    </header>
+
+    <div class="container">
+        <!-- Coluna de Registro -->
+        <div class="card">
+            <h2>Registrar Nova Troca</h2>
+            <div class="form-group">
+                <label for="username">Nome do Usuário</label>
+                <input type="text" id="username" placeholder="Ex: Maria Silva">
+            </div>
+            <div class="form-group">
+                <label for="item">Item Trocado</label>
+                <input type="text" id="item" placeholder="Ex: Camiseta de Algodão">
+            </div>
+            <div class="form-group">
+                <label for="category">Categoria do Item</label>
+                <select id="category">
+                    <option value="roupa">Roupas (Economia: 2700L Água | 10kg CO₂)</option>
+                    <option value="livro">Livros (Economia: 300L Água | 2kg CO₂)</option>
+                    <option value="eletronico">Eletrônicos (Economia: 1500L Água | 50kg CO₂)</option>
+                    <option value="brinquedo">Brinquedos/Plástico (Economia: 800L Água | 5kg CO₂)</option>
+                </select>
+            </div>
+            <button onclick="registrarTroca()">Computar Troca</button>
+        </div>
+
+        <!-- Coluna de Impacto Global e Ranking -->
+        <div class="card">
+            <h2>Impacto Ambiental Global da Comunidade</h2>
+            <div class="impact-stats">
+                <div class="stat-box">
+                    💧 Água Poupada
+                    <span id="total-agua">0</span> Litros
+                </div>
+                <div class="stat-box">
+                    ☁️ CO₂ Evitado
+                    <span id="total-co2">0</span> Kg
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px;">🏆 Ranking de Ecologistas</h2>
+            <ul class="ranking-list" id="ranking-container">
+                <!-- O ranking será inserido aqui pelo JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Dados de impacto baseados em estimativas reais (por unidade)
+        const impactoTabela = {
+            roupa: { agua: 2700, co2: 10 },
+            livro: { agua: 300, co2: 2 },
+            eletronico: { agua: 1500, co2: 50 },
+            brinquedo: { agua: 800, co2: 5 }
+        };
+
+        // Estado da aplicação
+        let usuarios = {};
+        let totalAgua = 0;
+        let totalCo2 = 0;
+
+        function registrarTroca() {
+            const nome = document.getElementById('username').value.trim();
+            const item = document.getElementById('item').value.trim();
+            const categoria = document.getElementById('category').value;
+
+            if (nome === '' || item === '') {
+                alert('Por favor, preencha o nome e o item antes de registrar.');
+                return;
+            }
+
+            // Pega os valores da tabela de impacto
+            const aguaPoupada = impactoTabela[categoria].agua;
+            const co2Poupado = impactoTabela[categoria].co2;
+
+            // Atualiza os totais globais
+            totalAgua += aguaPoupada;
+            totalCo2 += co2Poupado;
+            document.getElementById('total-agua').innerText = totalAgua.toLocaleString('pt-BR');
+            document.getElementById('total-co2').innerText = totalCo2.toLocaleString('pt-BR');
+
+            // Adiciona a pontuação ao usuário (Pontuação = Água + (CO2 * 10) para balancear)
+            const pontuacaoItem = aguaPoupada + (co2Poupado * 10);
+            
+            if (usuarios[nome]) {
+                usuarios[nome] += pontuacaoItem;
+            } else {
+                usuarios[nome] = pontuacaoItem;
+            }
+
+            // Limpa o formulário
+            document.getElementById('item').value = '';
+
+            atualizarRanking();
+        }
+
+        function atualizarRanking() {
+            const container = document.getElementById('ranking-container');
+            container.innerHTML = ''; // Limpa o ranking atual
+
+            // Converte o objeto em array e ordena pela maior pontuação
+            const listaOrdenada = Object.entries(usuarios)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5); // Mostra o Top 5
+
+            // Cria os elementos visuais do ranking
+            listaOrdenada.forEach((user, index) => {
+                const li = document.createElement('li');
+                
+                let medalha = '';
+                if(index === 0) medalha = '🥇 ';
+                if(index === 1) medalha = '🥈 ';
+                if(index === 2) medalha = '🥉 ';
+
+                li.innerHTML = `
+                    <span>${medalha} ${user[0]}</span>
+                    <span class="badge">${user[1].toLocaleString('pt-BR')} pts</span>
+                `;
+                container.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
